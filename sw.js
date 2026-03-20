@@ -1,4 +1,5 @@
-const CACHE = 'japan-live-v1';
+const VERSION = '1773985390';
+const CACHE = `japan-live-v${VERSION}`;
 const STATIC = [
   './',
   './index.html',
@@ -26,7 +27,6 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // ไม่ cache YouTube, Google Sheets, Open-Meteo
   if (
     url.hostname.includes('youtube.com') ||
     url.hostname.includes('ytimg.com') ||
@@ -38,7 +38,6 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Cache-first สำหรับ static assets
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
