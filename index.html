@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Japan Live Monitor</title>
+<meta name="description" content="รวม live camera จากสถานที่ต่างๆ ในญี่ปุ่น ดูสภาพอากาศและบรรยากาศก่อนเดินทาง">
+<meta property="og:title" content="Japan Live Monitor">
+<meta property="og:description" content="รวม live camera จากสถานที่ต่างๆ ในญี่ปุ่น ดูสภาพอากาศและบรรยากาศก่อนเดินทาง">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#060608">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://www.youtube.com">
@@ -140,40 +145,13 @@ body::before {
 .city-spacer { flex: 1; }
 
 .cam-grid { display: grid; gap: 1px; background: var(--border); }
-.cam-card { background: var(--bg); position: relative; cursor: pointer; overflow: hidden; }
-.cam-card:hover { background: #0f0f16; }
 .cam-card iframe { width: 100%; height: 178px; border: none; display: block; pointer-events: none; }
-
-/* ── THUMBNAIL PLACEHOLDER ── */
-.cam-thumb {
-  width: 100%; height: 178px;
-  display: block;
-  object-fit: cover;
-  background: #0a0a10;
-  transition: opacity 0.3s;
-}
-.cam-card.loaded .cam-thumb { display: none; }
-.cam-card.loaded iframe { display: block; }
-.cam-card:not(.loaded) iframe { display: none; }
-.thumb-play {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40px; height: 40px;
-  background: rgba(0,0,0,0.6);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.cam-card.loaded .thumb-play { display: none; }
 .cam-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.78) 100%); pointer-events: none; }
 .cam-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 7px 9px; display: flex; align-items: flex-end; justify-content: space-between; }
 .cam-label { font-size: 10px; color: rgba(255,255,255,0.8); letter-spacing: 0.07em; text-shadow: 0 1px 4px rgba(0,0,0,0.9); text-transform: uppercase; }
 .cam-btns { display: flex; gap: 3px; opacity: 0; transition: opacity 0.15s; }
 .cam-card:hover .cam-btns { opacity: 1; }
-.cam-act { width: 24px; height: 24px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.75); font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; pointer-events: all; transition: all 0.12s; }
+.cam-act { width: 24px; height: 24px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; justify-content: center; pointer-events: all; transition: all 0.12s; }
 .cam-act:hover { background: rgba(50,120,220,0.7); border-color: #6af; }
 
 #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; }
@@ -185,6 +163,70 @@ body::before {
 
 #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-size: 13px; padding: 10px 20px; border-radius: 4px; opacity: 0; transition: opacity 0.25s; z-index: 2000; pointer-events: none; white-space: nowrap; }
 #toast.show { opacity: 1; }
+.ico { width: 14px; height: 14px; display: inline-block; vertical-align: middle; pointer-events: none; flex-shrink: 0; }
+.ico-lg { width: 32px; height: 32px; }
+
+/* ── SKELETON LOADING ── */
+.skeleton-section { border-bottom: 1px solid var(--border); }
+.skeleton-city { padding: 15px 20px 11px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 11px; }
+.skeleton-bar { width: 3px; height: 16px; background: var(--surface2); border-radius: 2px; flex-shrink: 0; }
+.skeleton-text { height: 13px; border-radius: 3px; background: var(--surface2); overflow: hidden; position: relative; }
+.skeleton-text::after, .skeleton-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.skeleton-grid { display: grid; gap: 1px; background: var(--border); }
+.skeleton-card { height: 178px; background: var(--surface2); position: relative; overflow: hidden; }
+
+/* ── CARD HOVER ── */
+.cam-card {
+  background: var(--bg);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+.cam-card:hover { transform: scale(1.016); filter: brightness(1.08); z-index: 1; }
+
+/* ── THUMBNAIL ── */
+.cam-thumb {
+  width: 100%; height: 178px;
+  display: block; object-fit: cover;
+  background: var(--surface2);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.cam-thumb.visible { opacity: 1; }
+.cam-card.loaded .cam-thumb { display: none; }
+.cam-card.loaded iframe { display: block; }
+.cam-card:not(.loaded) iframe { display: none; }
+
+/* ── OFFLINE FALLBACK ── */
+.cam-fallback {
+  display: none; width: 100%; height: 178px;
+  background: var(--surface2);
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 8px;
+}
+.cam-fallback.show { display: flex; }
+.cam-fallback-label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-align: center; padding: 0 16px; line-height: 1.6; }
+.cam-fallback.show ~ .thumb-play { display: none; }
+
+.thumb-play {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 40px; height: 40px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  transition: transform 0.18s ease;
+}
+.cam-card:hover .thumb-play { transform: translate(-50%,-50%) scale(1.12); }
+.cam-card.loaded .thumb-play { display: none; }
 
 /* ── MOBILE ── */
 @media (max-width: 600px) {
@@ -241,6 +283,27 @@ body::before {
 </head>
 <body>
 
+<!-- SVG icon sprite -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="ico-expand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 2h4v4M6 14H2v-4M14 10v4h-4M2 6V2h4"/>
+  </symbol>
+  <symbol id="ico-play" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M5 3.5l8 4.5-8 4.5V3.5z"/>
+  </symbol>
+  <symbol id="ico-warning" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 1.5L1 14h14L8 1.5z"/>
+    <path d="M8 6v4M8 11.5v.5"/>
+  </symbol>
+  <symbol id="ico-close" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <path d="M3 3l10 10M13 3L3 13"/>
+  </symbol>
+  <symbol id="ico-refresh" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13.5 8a5.5 5.5 0 1 1-1.1-3.3"/>
+    <path d="M13.5 2.5V6H10"/>
+  </symbol>
+</svg>
+
 <div id="header">
   <div>
     <div class="logo"><div class="logo-dot"></div>JAPAN LIVE</div>
@@ -260,7 +323,7 @@ body::before {
       <button class="col-btn" data-cols="3">3</button>
       <button class="col-btn" data-cols="4">4</button>
     </div>
-    <button class="icon-btn" onclick="loadFromSheet()">↻ Refresh</button>
+    <button class="icon-btn" onclick="loadFromSheet()"><svg class="ico"><use href="#ico-refresh"/></svg> Refresh</button>
   </div>
 </div>
 
@@ -273,7 +336,7 @@ body::before {
 <div id="main" style="display:none;"></div>
 
 <div id="lightbox">
-  <button id="lb-close">✕</button>
+  <button id="lb-close"><svg class="ico"><use href="#ico-close"/></svg></button>
   <div id="lb-title"></div>
   <iframe id="lb-iframe" src="" allow="autoplay" allowfullscreen></iframe>
 </div>
@@ -329,6 +392,26 @@ function setBadge(state, text) {
   document.getElementById('source-text').textContent = text + suffix;
 }
 
+// ── SKELETON ──────────────────────────────────
+function showSkeleton() {
+  document.getElementById('main').style.display = 'none';
+  const ss = document.getElementById('state-screen');
+  ss.style.display = 'block';
+  const cols = currentCols;
+  const sections = [4, 3, 3].map(count => `
+    <div class="skeleton-section">
+      <div class="skeleton-city">
+        <div class="skeleton-bar"></div>
+        <div class="skeleton-text" style="width:80px"></div>
+        <div class="skeleton-text" style="width:50px;margin-left:4px"></div>
+      </div>
+      <div class="skeleton-grid" style="grid-template-columns:repeat(${cols},1fr)">
+        ${Array(count).fill('<div class="skeleton-card"></div>').join('')}
+      </div>
+    </div>`).join('');
+  ss.innerHTML = sections;
+}
+
 function showState(html) {
   document.getElementById('main').style.display = 'none';
   const ss = document.getElementById('state-screen');
@@ -337,7 +420,9 @@ function showState(html) {
 }
 
 function showMain() {
-  document.getElementById('state-screen').style.display = 'none';
+  const ss = document.getElementById('state-screen');
+  ss.style.display = 'none';
+  ss.innerHTML = '';
   document.getElementById('main').style.display = 'block';
 }
 
@@ -357,7 +442,7 @@ async function fetchWithTimeout(url, ms = 10000) {
 }
 
 async function loadFromSheet() {
-  showState(`<div class="spinner"></div><div class="state-title">กำลังดึงข้อมูลจาก Sheet...</div>`);
+  showSkeleton();
   setBadge('loading', 'กำลังโหลด...');
 
   try {
@@ -387,12 +472,12 @@ async function loadFromSheet() {
     showMain();
     buildFilters();
     render();
-    showToast(`✅ โหลดสำเร็จ ${cameras.length} กล้อง`);
+    showToast(`โหลดสำเร็จ ${cameras.length} กล้อง`);
 
   } catch(e) {
     setBadge('err', 'โหลดไม่สำเร็จ');
     showState(`
-      <div style="font-size:28px">⚠</div>
+      <svg class="ico-lg ico" style="width:36px;height:36px;color:var(--accent)"><use href="#ico-warning"/></svg>
       <div class="state-title">ดึงข้อมูลไม่สำเร็จ</div>
       <div class="state-sub">${e.message}<br><br>ตรวจสอบว่า Deploy ถูกต้องและ Who has access เป็น <strong>Anyone</strong></div>
       <button class="retry-btn" onclick="loadFromSheet()">↻ ลองใหม่</button>
@@ -450,13 +535,20 @@ function render() {
       // แสดง thumbnail ก่อน iframe ยังไม่โหลด
       card.innerHTML = `
         <img class="cam-thumb" src="${thumbUrl(cam.id)}" alt="${cam.title}" loading="lazy" decoding="async">
+        <div class="cam-fallback"><div class="cam-fallback-label">${cam.title}<br><span style="font-size:10px;color:var(--muted)">ไม่สามารถโหลดภาพได้</span></div></div>
         <iframe src="" allow="autoplay" allowfullscreen></iframe>
-        <div class="thumb-play">▶</div>
+        <div class="thumb-play"><svg class="ico" style="width:18px;height:18px;color:#fff"><use href="#ico-play"/></svg></div>
         <div class="cam-overlay"></div>
         <div class="cam-bar">
           <span class="cam-label">${cam.title}</span>
-          <div class="cam-btns"><button class="cam-act" title="ขยาย">⛶</button></div>
+          <div class="cam-btns"><button class="cam-act" title="ขยาย"><svg class="ico"><use href="#ico-expand"/></svg></button></div>
         </div>`;
+
+      // thumbnail fade-in
+      const thumb = card.querySelector('.cam-thumb');
+      const fallback = card.querySelector('.cam-fallback');
+      thumb.addEventListener('load', () => thumb.classList.add('visible'));
+      thumb.addEventListener('error', () => { thumb.style.display = 'none'; fallback.classList.add('show'); });
 
       card.querySelector('.cam-act').addEventListener('click', e => { e.stopPropagation(); openLB(cam); });
       card.addEventListener('click', () => openLB(cam));
@@ -476,26 +568,32 @@ document.getElementById('filter-bar').addEventListener('click', e => {
   const b = e.target.closest('.city-pill');
   if (!b) return;
   currentCity = b.dataset.city;
-  document.querySelectorAll('.city-pill').forEach(x => x.classList.toggle('active', x.dataset.city === currentCity));
+  buildFilters();
   document.querySelectorAll('.city-section').forEach(s => s.classList.toggle('hidden', currentCity !== 'all' && s.dataset.city !== currentCity));
 });
 
 function buildFilters() {
   const bar = document.getElementById('filter-bar');
   bar.innerHTML = '';
-  const mk = (city, label, pip, count) => {
+  const mk = (city, label, pip, count, activeColor) => {
     const b = document.createElement('button');
-    b.className = 'city-pill' + (currentCity === city ? ' active' : '');
+    const isActive = currentCity === city;
+    b.className = 'city-pill' + (isActive ? ' active' : '');
     b.dataset.city = city;
+    if (isActive && activeColor) {
+      b.style.borderColor = activeColor;
+      b.style.color = activeColor;
+      b.style.background = `${activeColor}18`;
+    }
     b.innerHTML = `<span class="pip" style="background:${pip}"></span>${label}<span style="color:var(--muted);font-size:10px;margin-left:3px">${count}</span>`;
     return b;
   };
-  bar.appendChild(mk('all', 'ทั้งหมด', '#fff', cameras.length));
+  bar.appendChild(mk('all', 'ทั้งหมด', '#fff', cameras.length, null));
   Object.entries(CITIES).forEach(([k,v]) => {
     const n = cameras.filter(c => c.city === k).length;
     if (!n) return;
     const sep = document.createElement('div'); sep.className = 'fsep'; bar.appendChild(sep);
-    bar.appendChild(mk(k, v.th, v.color, n));
+    bar.appendChild(mk(k, v.th, v.color, n, v.color));
   });
 }
 
