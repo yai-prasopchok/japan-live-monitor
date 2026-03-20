@@ -29,6 +29,7 @@
 <link rel="preconnect" href="https://www.youtube.com">
 <link rel="preconnect" href="https://i.ytimg.com">
 <link rel="preconnect" href="https://api.open-meteo.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
 <style>
@@ -158,16 +159,23 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
 .skeleton-card { height: 178px; background: var(--surface2); position: relative; overflow: hidden; }
 
 /* MAP VIEW */
-#map-view { display: none; padding: 16px 20px 60px; }
+#map-view { display: none; padding: 0 0 60px; }
 #map-view.active { display: block; }
-#map-canvas { width: 100%; height: 520px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border2); background: var(--surface2); }
-#map-canvas iframe { width: 100%; height: 100%; border: none; }
-.map-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 14px; }
+#map-canvas { width: 100%; height: 520px; background: var(--surface2); }
+.map-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; padding: 14px 20px 0; }
 .map-item { padding: 10px 13px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: border-color 0.15s; }
 .map-item:hover { border-color: var(--border2); }
 .map-item-city { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
 .map-item-title { font-size: 12px; color: var(--text); }
 .map-item-loc { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.leaflet-popup-content-wrapper { background: #13131a; border: 1px solid rgba(255,255,255,0.13); border-radius: 6px; box-shadow: none; color: #e8e8f0; }
+.leaflet-popup-tip { background: #13131a; }
+.leaflet-popup-content { margin: 10px 14px; font-size: 12px; line-height: 1.5; }
+.leaflet-popup-content strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.leaflet-popup-content button { margin-top: 8px; padding: 5px 12px; background: #ff3b4e; border: none; border-radius: 3px; color: #fff; font-size: 11px; cursor: pointer; width: 100%; }
+.leaflet-popup-content button:hover { background: #cc2f40; }
+.leaflet-control-attribution { background: rgba(13,13,18,0.8) !important; color: #555 !important; }
+.leaflet-control-attribution a { color: #888 !important; }
 
 /* VIEW TOGGLE */
 .view-btn { width: 26px; height: 26px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
@@ -179,11 +187,12 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
 #lightbox.open { display: flex; }
 #lb-title { font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: var(--muted2); letter-spacing: 0.15em; }
 #lb-iframe { width: min(92vw, 1200px); height: min(70vh, 675px); border: 1px solid var(--border2); border-radius: 4px; }
-#lb-close { position: absolute; top: 18px; right: 22px; width: 34px; height: 34px; border: 1px solid var(--border2); background: var(--surface2); color: var(--muted2); border-radius: 3px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+#lb-close { width: 34px; height: 34px; border: 1px solid var(--border2); background: var(--surface2); color: var(--muted2); border-radius: 3px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
 #lb-close:hover { color: var(--text); }
-#lb-pip { position: absolute; top: 18px; right: 64px; width: 34px; height: 34px; border: 1px solid var(--border2); background: var(--surface2); color: var(--muted2); border-radius: 3px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: all 0.15s; }
+#lb-pip { width: 34px; height: 34px; border: 1px solid var(--border2); background: var(--surface2); color: var(--muted2); border-radius: 3px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
 #lb-pip.supported { display: flex; }
 #lb-pip:hover { color: var(--text); border-color: var(--green); }
+#lb-actions { position: absolute; top: 18px; right: 22px; display: flex; gap: 6px; align-items: center; }
 
 /* TOAST */
 #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-size: 13px; padding: 10px 20px; border-radius: 4px; opacity: 0; transition: opacity 0.25s; z-index: 2000; pointer-events: none; white-space: nowrap; }
@@ -217,7 +226,8 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
   .cam-btns { opacity: 1; }
   #lb-iframe { width: 96vw; height: 55vw; min-height: 200px; }
   #lb-title { font-size: 12px; text-align: center; }
-  #lb-close { top: 12px; right: 12px; width: 30px; height: 30px; }
+  #lb-actions { top: 12px; right: 12px; gap: 5px; }
+  #lb-close, #lb-pip { width: 30px; height: 30px; }
   #toast { font-size: 12px; padding: 8px 14px; bottom: 16px; max-width: 90vw; white-space: normal; text-align: center; }
   #toolbar { padding: 8px 14px; }
   #search-input { max-width: 100%; }
@@ -287,8 +297,10 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
 </div>
 
 <div id="lightbox">
-  <button id="lb-close"><svg class="ico"><use href="#ico-close"/></svg></button>
-  <button id="lb-pip" title="Picture-in-Picture"><svg class="ico"><use href="#ico-pip"/></svg></button>
+  <div id="lb-actions">
+    <button id="lb-pip" title="Picture-in-Picture"><svg class="ico"><use href="#ico-pip"/></svg></button>
+    <button id="lb-close"><svg class="ico"><use href="#ico-close"/></svg></button>
+  </div>
   <div id="lb-title"></div>
   <iframe id="lb-iframe" src="" allow="autoplay; picture-in-picture" allowfullscreen></iframe>
 </div>
@@ -611,31 +623,101 @@ function makeCard(cam) {
   return card;
 }
 
-// ── 11. Map view ──
-function renderMap() {
+// ── 11. Map view (Leaflet.js) ──
+let leafletMap = null;
+let leafletLoaded = false;
+
+async function ensureLeaflet() {
+  if (leafletLoaded) return;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  leafletLoaded = true;
+}
+
+async function renderMap() {
   const filtered = getFilteredCameras();
+
+  try {
+    await ensureLeaflet();
+  } catch(e) {
+    document.getElementById('map-canvas').innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;">โหลดแผนที่ไม่สำเร็จ</div>`;
+    return;
+  }
+
+  // สร้างหรือ reset map
+  if (leafletMap) {
+    leafletMap.remove();
+    leafletMap = null;
+  }
+  document.getElementById('map-canvas').innerHTML = '';
+
   const uniqueCities = [...new Set(filtered.map(c => c.city))];
   const bounds = uniqueCities.map(k => CITIES[k] || CITIES.other);
-  const lats = bounds.map(c => c.lat);
-  const lons = bounds.map(c => c.lon);
-  const mlat = (Math.min(...lats) + Math.max(...lats)) / 2;
-  const mlon = (Math.min(...lons) + Math.max(...lons)) / 2;
+  const mlat = bounds.reduce((s,c) => s + c.lat, 0) / bounds.length;
+  const mlon = bounds.reduce((s,c) => s + c.lon, 0) / bounds.length;
+  const zoom = uniqueCities.length <= 1 ? 12 : uniqueCities.length <= 3 ? 8 : 6;
 
-  const markers = uniqueCities.map(key => {
-    const c = CITIES[key] || CITIES.other;
-    return `marker=${c.lat},${c.lon}`;
-  }).join('&');
+  leafletMap = L.map('map-canvas', { zoomControl: true }).setView([mlat, mlon], zoom);
 
-  document.getElementById('map-canvas').innerHTML = `
-    <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${mlon-2},${mlat-1.5},${mlon+2},${mlat+1.5}&layer=mapnik&${markers}" style="width:100%;height:100%;border:none;"></iframe>`;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 18,
+  }).addTo(leafletMap);
 
-  const list = document.getElementById('map-list');
-  list.innerHTML = '';
-
+  // จัดกลุ่มกล้องตามเมือง — marker ต่อเมือง 1 อัน แสดงรายการกล้องใน popup
   const grouped = {};
   Object.keys(CITIES).forEach(k => grouped[k] = []);
   filtered.forEach(c => (grouped[c.city] || grouped['other']).push(c));
 
+  Object.entries(CITIES).forEach(([key, city]) => {
+    const cams = grouped[key];
+    if (!cams.length || key === 'other') return;
+
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:14px;height:14px;background:${city.color};border-radius:50%;border:2px solid rgba(255,255,255,0.6);box-shadow:0 0 6px ${city.color}88;"></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      popupAnchor: [0, -10],
+    });
+
+    const camLinks = cams.map((cam, i) =>
+      `<button onclick="window._mapOpenCam(${i}, '${key}')">${cam.title}</button>`
+    ).join('');
+
+    const marker = L.marker([city.lat, city.lon], { icon }).addTo(leafletMap);
+    marker.bindPopup(`<strong>${city.th} · ${cams.length} กล้อง</strong>${camLinks}`);
+  });
+
+  // other — marker แยกต่างหากได้ถ้ามีข้อมูล lat/lon
+  const otherCams = grouped['other'];
+  if (otherCams.length) {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:10px;height:10px;background:#607080;border-radius:50%;border:2px solid rgba(255,255,255,0.4);"></div>`,
+      iconSize: [10, 10], iconAnchor: [5, 5], popupAnchor: [0, -8],
+    });
+    const camLinks = otherCams.map((cam, i) =>
+      `<button onclick="window._mapOpenCam(${i}, 'other')">${cam.title}</button>`
+    ).join('');
+    L.marker([36.2048, 138.2529], { icon }).addTo(leafletMap)
+      .bindPopup(`<strong>อื่นๆ · ${otherCams.length} กล้อง</strong>${camLinks}`);
+  }
+
+  // ฟังก์ชัน callback จาก popup
+  window._mapOpenCam = (idx, cityKey) => {
+    const cams = grouped[cityKey];
+    if (cams && cams[idx]) openLB(cams[idx]);
+  };
+
+  // รายการด้านล่างแผนที่
+  const list = document.getElementById('map-list');
+  list.innerHTML = '';
   Object.entries(CITIES).forEach(([key, city]) => {
     const cams = grouped[key];
     if (!cams.length) return;
