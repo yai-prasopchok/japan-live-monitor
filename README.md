@@ -75,7 +75,17 @@ function doGet(e) {
 4. Who has access: **Anyone**
 5. กด **Deploy** แล้ว copy URL ที่ได้
 
-### 4. เปิดใช้งาน
+### 4. ใส่ URL ใน index.html
+
+เปิดไฟล์ `index.html` แล้วหาบรรทัดนี้:
+
+```javascript
+const SCRIPT_URL = 'https://script.google.com/macros/s/...';
+```
+
+แทนที่ด้วย URL ที่ได้จากขั้นตอน 3 แล้ว push ขึ้น GitHub
+
+### 5. เปิดใช้งาน
 
 เปิด [https://yai-prasopchok.github.io/japan-live-monitor/](https://yai-prasopchok.github.io/japan-live-monitor/) ได้เลย
 
