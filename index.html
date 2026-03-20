@@ -9,6 +9,11 @@
 <meta property="og:description" content="รวม live camera จากสถานที่ต่างๆ ในญี่ปุ่น ดูสภาพอากาศและบรรยากาศก่อนเดินทาง">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#060608">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JPN Live">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://www.youtube.com">
@@ -734,9 +739,13 @@ function showToast(msg) {
 
 // ── Init ──
 loadPrefs();
-// sync col btn active state after loadPrefs
 document.querySelectorAll('.col-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.cols) === currentCols));
 loadFromSheet();
+
+// ── PWA Service Worker ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>

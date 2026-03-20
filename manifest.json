@@ -1,0 +1,25 @@
+{
+  "name": "Japan Live Monitor",
+  "short_name": "JPN Live",
+  "description": "รวม live camera จากสถานที่ต่างๆ ในญี่ปุ่น",
+  "start_url": "/japan-live-monitor/",
+  "scope": "/japan-live-monitor/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060608",
+  "theme_color": "#060608",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
