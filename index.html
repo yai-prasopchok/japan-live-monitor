@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://www.youtube.com">
 <link rel="preconnect" href="https://i.ytimg.com">
+<link rel="preconnect" href="https://api.open-meteo.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
 <style>
@@ -29,32 +30,11 @@
   --green: #3ecf6a;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Sarabun', sans-serif;
-  font-weight: 300;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
-  pointer-events: none;
-  z-index: 9999;
-}
-#header {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 0 20px;
-  height: 54px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 200;
-  gap: 12px;
-}
+body { background: var(--bg); color: var(--text); font-family: 'Sarabun', sans-serif; font-weight: 300; min-height: 100vh; overflow-x: hidden; }
+body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px); pointer-events: none; z-index: 9999; }
+
+/* HEADER */
+#header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 20px; height: 54px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 200; gap: 12px; }
 .logo { font-family: 'Bebas Neue', sans-serif; font-size: 19px; letter-spacing: 0.12em; display: flex; align-items: center; gap: 8px; }
 .logo-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: blink 1.4s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
@@ -64,32 +44,15 @@ body::before {
 #jst-sub { font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
 .hright { display: flex; justify-content: flex-end; align-items: center; gap: 6px; }
 .col-grp { display: flex; gap: 3px; }
-.col-btn, .icon-btn {
-  height: 26px;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--muted2);
-  font-family: 'Sarabun', sans-serif;
-  font-size: 11px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
+.col-btn, .icon-btn { height: 26px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); font-family: 'Sarabun', sans-serif; font-size: 11px; border-radius: 3px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
 .col-btn { width: 26px; }
 .icon-btn { padding: 0 11px; font-size: 12px; }
 .col-btn:hover, .icon-btn:hover { color: var(--text); }
 .col-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .icon-btn:hover { border-color: var(--green); color: var(--green); }
 
-#source-badge {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 10px; color: var(--muted); letter-spacing: 0.06em;
-  padding: 3px 9px;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  transition: all 0.3s;
-}
+/* SOURCE BADGE */
+#source-badge { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; padding: 3px 9px; border: 1px solid var(--border); border-radius: 3px; transition: all 0.3s; }
 #source-badge .sd { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); transition: background 0.3s; flex-shrink: 0; }
 #source-badge.ok .sd { background: var(--green); }
 #source-badge.ok { border-color: rgba(62,207,106,0.25); }
@@ -97,31 +60,27 @@ body::before {
 #source-badge.err { border-color: rgba(255,59,78,0.25); }
 #source-badge.loading .sd { animation: blink 0.8s ease-in-out infinite; }
 
-#filter-bar {
-  display: flex; gap: 5px; align-items: center;
-  padding: 9px 20px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto; scrollbar-width: none;
-}
+/* TOOLBAR (sort + search) */
+#toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+#search-input { flex: 1; max-width: 220px; height: 26px; padding: 0 10px; background: var(--bg); border: 1px solid var(--border2); border-radius: 3px; color: var(--text); font-size: 12px; font-family: 'Sarabun', sans-serif; outline: none; transition: border-color 0.15s; }
+#search-input:focus { border-color: var(--accent); }
+#search-input::placeholder { color: var(--muted); }
+#sort-select { height: 26px; padding: 0 8px; background: var(--bg); border: 1px solid var(--border2); border-radius: 3px; color: var(--muted2); font-size: 11px; font-family: 'Sarabun', sans-serif; outline: none; cursor: pointer; }
+#sort-select option { background: #13131a; }
+#search-count { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+/* FILTER BAR */
+#filter-bar { display: flex; gap: 5px; align-items: center; padding: 9px 20px; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
 #filter-bar::-webkit-scrollbar { display: none; }
-.city-pill {
-  flex-shrink: 0; display: flex; align-items: center; gap: 7px;
-  padding: 4px 12px; border-radius: 2px;
-  border: 1px solid var(--border); background: transparent;
-  color: var(--muted2); font-size: 12px; font-family: 'Sarabun', sans-serif;
-  cursor: pointer; transition: all 0.15s; white-space: nowrap;
-}
+.city-pill { flex-shrink: 0; display: flex; align-items: center; gap: 7px; padding: 4px 12px; border-radius: 2px; border: 1px solid var(--border); background: transparent; color: var(--muted2); font-size: 12px; font-family: 'Sarabun', sans-serif; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
 .city-pill .pip { width: 5px; height: 5px; border-radius: 50%; opacity: 0.4; flex-shrink: 0; transition: opacity 0.15s; }
 .city-pill:hover { border-color: var(--border2); color: var(--text); }
 .city-pill:hover .pip, .city-pill.active .pip { opacity: 1; }
 .city-pill.active { border-color: var(--border2); color: var(--text); background: rgba(255,255,255,0.035); }
 .fsep { width: 1px; height: 14px; background: var(--border); flex-shrink: 0; }
 
-#state-screen {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 60vh; gap: 14px; color: var(--muted2);
-}
+/* STATE */
+#state-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 14px; color: var(--muted2); }
 .state-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.1em; color: var(--text); }
 .state-sub { font-size: 13px; color: var(--muted); text-align: center; max-width: 380px; line-height: 1.7; }
 .retry-btn { margin-top: 4px; padding: 8px 20px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); font-family: 'Sarabun', sans-serif; font-size: 13px; border-radius: 3px; cursor: pointer; transition: all 0.15s; }
@@ -129,23 +88,39 @@ body::before {
 .spinner { width: 26px; height: 26px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* CITY SECTIONS */
 #main { padding-bottom: 60px; }
 .city-section { border-bottom: 1px solid var(--border); }
 .city-section.hidden { display: none; }
-.city-header {
-  display: flex; align-items: baseline; gap: 11px;
-  padding: 15px 20px 11px;
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 54px; background: var(--bg); z-index: 100;
-}
-.city-bar { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; align-self: center; }
+.city-header { display: flex; align-items: center; gap: 11px; padding: 15px 20px 11px; border-bottom: 1px solid var(--border); position: sticky; top: 54px; background: var(--bg); z-index: 100; }
+.city-bar { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; }
 .city-th { font-size: 14px; font-weight: 500; color: var(--text); }
 .city-en { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 0.1em; color: var(--muted); }
 .city-count { font-size: 10px; color: var(--muted); border: 1px solid var(--border); padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em; }
 .city-spacer { flex: 1; }
 
+/* WEATHER BADGE */
+.city-weather { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted2); padding: 2px 8px; border: 1px solid var(--border); border-radius: 2px; }
+.city-weather .wtemp { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--text); letter-spacing: 0.05em; }
+.city-weather .wicon { font-size: 13px; line-height: 1; }
+
+/* CAMERA GRID */
 .cam-grid { display: grid; gap: 1px; background: var(--border); }
+.cam-card { background: var(--bg); position: relative; cursor: pointer; overflow: hidden; transition: transform 0.18s ease, filter 0.18s ease; }
+.cam-card:hover { transform: scale(1.016); filter: brightness(1.08); z-index: 1; }
 .cam-card iframe { width: 100%; height: 178px; border: none; display: block; pointer-events: none; }
+.cam-thumb { width: 100%; height: 178px; display: block; object-fit: cover; background: var(--surface2); opacity: 0; transition: opacity 0.4s ease; }
+.cam-thumb.visible { opacity: 1; }
+.cam-card.loaded .cam-thumb { display: none; }
+.cam-card.loaded iframe { display: block; }
+.cam-card:not(.loaded) iframe { display: none; }
+.cam-fallback { display: none; width: 100%; height: 178px; background: var(--surface2); align-items: center; justify-content: center; flex-direction: column; gap: 8px; }
+.cam-fallback.show { display: flex; }
+.cam-fallback-label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-align: center; padding: 0 16px; line-height: 1.6; }
+.cam-fallback.show ~ .thumb-play { display: none; }
+.thumb-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; background: rgba(0,0,0,0.55); border-radius: 50%; display: flex; align-items: center; justify-content: center; pointer-events: none; transition: transform 0.18s ease; }
+.cam-card:hover .thumb-play { transform: translate(-50%,-50%) scale(1.12); }
+.cam-card.loaded .thumb-play { display: none; }
 .cam-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.78) 100%); pointer-events: none; }
 .cam-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 7px 9px; display: flex; align-items: flex-end; justify-content: space-between; }
 .cam-label { font-size: 10px; color: rgba(255,255,255,0.8); letter-spacing: 0.07em; text-shadow: 0 1px 4px rgba(0,0,0,0.9); text-transform: uppercase; }
@@ -154,6 +129,37 @@ body::before {
 .cam-act { width: 24px; height: 24px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; justify-content: center; pointer-events: all; transition: all 0.12s; }
 .cam-act:hover { background: rgba(50,120,220,0.7); border-color: #6af; }
 
+/* NO RESULTS */
+.no-results { padding: 40px 20px; text-align: center; font-size: 13px; color: var(--muted); }
+
+/* SKELETON */
+.skeleton-section { border-bottom: 1px solid var(--border); }
+.skeleton-city { padding: 15px 20px 11px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 11px; }
+.skeleton-bar { width: 3px; height: 16px; background: var(--surface2); border-radius: 2px; flex-shrink: 0; }
+.skeleton-text { height: 13px; border-radius: 3px; background: var(--surface2); overflow: hidden; position: relative; }
+.skeleton-text::after, .skeleton-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); animation: shimmer 1.4s ease-in-out infinite; }
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.skeleton-grid { display: grid; gap: 1px; background: var(--border); }
+.skeleton-card { height: 178px; background: var(--surface2); position: relative; overflow: hidden; }
+
+/* MAP VIEW */
+#map-view { display: none; padding: 16px 20px 60px; }
+#map-view.active { display: block; }
+#map-canvas { width: 100%; height: 520px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border2); background: var(--surface2); }
+#map-canvas iframe { width: 100%; height: 100%; border: none; }
+.map-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 14px; }
+.map-item { padding: 10px 13px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: border-color 0.15s; }
+.map-item:hover { border-color: var(--border2); }
+.map-item-city { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+.map-item-title { font-size: 12px; color: var(--text); }
+.map-item-loc { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* VIEW TOGGLE */
+.view-btn { width: 26px; height: 26px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.view-btn.active { background: var(--surface2); border-color: var(--border2); color: var(--text); }
+.view-btn:hover { color: var(--text); }
+
+/* LIGHTBOX */
 #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; }
 #lightbox.open { display: flex; }
 #lb-title { font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: var(--muted2); letter-spacing: 0.15em; }
@@ -161,89 +167,18 @@ body::before {
 #lb-close { position: absolute; top: 18px; right: 22px; width: 34px; height: 34px; border: 1px solid var(--border2); background: var(--surface2); color: var(--muted2); border-radius: 3px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
 #lb-close:hover { color: var(--text); }
 
+/* TOAST */
 #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-size: 13px; padding: 10px 20px; border-radius: 4px; opacity: 0; transition: opacity 0.25s; z-index: 2000; pointer-events: none; white-space: nowrap; }
 #toast.show { opacity: 1; }
+
+/* ICONS */
 .ico { width: 14px; height: 14px; display: inline-block; vertical-align: middle; pointer-events: none; flex-shrink: 0; }
-.ico-lg { width: 32px; height: 32px; }
+.ico-lg { width: 36px; height: 36px; }
 
-/* ── SKELETON LOADING ── */
-.skeleton-section { border-bottom: 1px solid var(--border); }
-.skeleton-city { padding: 15px 20px 11px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 11px; }
-.skeleton-bar { width: 3px; height: 16px; background: var(--surface2); border-radius: 2px; flex-shrink: 0; }
-.skeleton-text { height: 13px; border-radius: 3px; background: var(--surface2); overflow: hidden; position: relative; }
-.skeleton-text::after, .skeleton-card::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
-  animation: shimmer 1.4s ease-in-out infinite;
-}
-@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-.skeleton-grid { display: grid; gap: 1px; background: var(--border); }
-.skeleton-card { height: 178px; background: var(--surface2); position: relative; overflow: hidden; }
-
-/* ── CARD HOVER ── */
-.cam-card {
-  background: var(--bg);
-  position: relative;
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.18s ease, filter 0.18s ease;
-}
-.cam-card:hover { transform: scale(1.016); filter: brightness(1.08); z-index: 1; }
-
-/* ── THUMBNAIL ── */
-.cam-thumb {
-  width: 100%; height: 178px;
-  display: block; object-fit: cover;
-  background: var(--surface2);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.cam-thumb.visible { opacity: 1; }
-.cam-card.loaded .cam-thumb { display: none; }
-.cam-card.loaded iframe { display: block; }
-.cam-card:not(.loaded) iframe { display: none; }
-
-/* ── OFFLINE FALLBACK ── */
-.cam-fallback {
-  display: none; width: 100%; height: 178px;
-  background: var(--surface2);
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 8px;
-}
-.cam-fallback.show { display: flex; }
-.cam-fallback-label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-align: center; padding: 0 16px; line-height: 1.6; }
-.cam-fallback.show ~ .thumb-play { display: none; }
-
-.thumb-play {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 40px; height: 40px;
-  background: rgba(0,0,0,0.55);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
-  transition: transform 0.18s ease;
-}
-.cam-card:hover .thumb-play { transform: translate(-50%,-50%) scale(1.12); }
-.cam-card.loaded .thumb-play { display: none; }
-
-/* ── MOBILE ── */
+/* MOBILE */
 @media (max-width: 600px) {
-  #header {
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    height: auto;
-    padding: 10px 14px;
-    gap: 6px;
-  }
-  .hcenter {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    gap: 8px;
-    justify-content: flex-start;
-    order: -1;
-  }
+  #header { grid-template-columns: 1fr auto; grid-template-rows: auto auto; height: auto; padding: 10px 14px; gap: 6px; }
+  .hcenter { grid-column: 1 / -1; flex-direction: row; gap: 8px; justify-content: flex-start; order: -1; }
   #jst-clock { font-size: 18px; }
   #jst-sub { display: none; }
   .logo { font-size: 16px; }
@@ -251,31 +186,29 @@ body::before {
   .hright { gap: 4px; }
   #source-badge { display: none; }
   .col-grp { display: none; }
-
   #filter-bar { padding: 8px 14px; gap: 6px; }
   .city-pill { padding: 5px 10px; font-size: 11px; }
   .fsep { display: none; }
-
   .city-header { padding: 12px 14px 9px; top: var(--header-h, 72px); gap: 8px; }
   .city-en { font-size: 14px; }
   .city-th { font-size: 13px; }
-
   .cam-grid { grid-template-columns: 1fr !important; }
   .cam-card iframe { height: 210px; }
   .cam-thumb { height: 210px; }
+  .cam-fallback { height: 210px; }
   .cam-btns { opacity: 1; }
-
   #lb-iframe { width: 96vw; height: 55vw; min-height: 200px; }
   #lb-title { font-size: 12px; text-align: center; }
-  #lb-close { top: 12px; right: 12px; width: 30px; height: 30px; font-size: 13px; }
-
+  #lb-close { top: 12px; right: 12px; width: 30px; height: 30px; }
   #toast { font-size: 12px; padding: 8px 14px; bottom: 16px; max-width: 90vw; white-space: normal; text-align: center; }
+  #toolbar { padding: 8px 14px; }
+  #search-input { max-width: 100%; }
 }
-
 @media (min-width: 601px) and (max-width: 900px) {
   .cam-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .cam-card iframe { height: 160px; }
   .cam-thumb { height: 160px; }
+  .cam-fallback { height: 160px; }
   #source-badge span { display: none; }
   #source-badge { padding: 3px 6px; }
 }
@@ -283,25 +216,14 @@ body::before {
 </head>
 <body>
 
-<!-- SVG icon sprite -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-  <symbol id="ico-expand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 2h4v4M6 14H2v-4M14 10v4h-4M2 6V2h4"/>
-  </symbol>
-  <symbol id="ico-play" viewBox="0 0 16 16" fill="currentColor">
-    <path d="M5 3.5l8 4.5-8 4.5V3.5z"/>
-  </symbol>
-  <symbol id="ico-warning" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 1.5L1 14h14L8 1.5z"/>
-    <path d="M8 6v4M8 11.5v.5"/>
-  </symbol>
-  <symbol id="ico-close" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-    <path d="M3 3l10 10M13 3L3 13"/>
-  </symbol>
-  <symbol id="ico-refresh" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M13.5 8a5.5 5.5 0 1 1-1.1-3.3"/>
-    <path d="M13.5 2.5V6H10"/>
-  </symbol>
+  <symbol id="ico-expand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4v4M6 14H2v-4M14 10v4h-4M2 6V2h4"/></symbol>
+  <symbol id="ico-play" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5l8 4.5-8 4.5V3.5z"/></symbol>
+  <symbol id="ico-warning" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5L1 14h14L8 1.5z"/><path d="M8 6v4M8 11.5v.5"/></symbol>
+  <symbol id="ico-close" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></symbol>
+  <symbol id="ico-refresh" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 8a5.5 5.5 0 1 1-1.1-3.3"/><path d="M13.5 2.5V6H10"/></symbol>
+  <symbol id="ico-grid" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></symbol>
+  <symbol id="ico-map" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3l4-1 6 2 4-1v11l-4 1-6-2-4 1V3z"/><path d="M5 2v11M11 4v11"/></symbol>
 </svg>
 
 <div id="header">
@@ -314,26 +236,36 @@ body::before {
     <div id="jst-sub">JST · Japan Standard Time</div>
   </div>
   <div class="hright">
-    <div id="source-badge" class="loading">
-      <div class="sd"></div>
-      <span id="source-text">กำลังโหลด...</span>
-    </div>
+    <div id="source-badge" class="loading"><div class="sd"></div><span id="source-text">กำลังโหลด...</span></div>
     <div class="col-grp">
-      <button class="col-btn active" data-cols="2">2</button>
+      <button class="col-btn" data-cols="2">2</button>
       <button class="col-btn" data-cols="3">3</button>
       <button class="col-btn" data-cols="4">4</button>
     </div>
+    <button class="view-btn active" id="btn-grid" title="Grid view"><svg class="ico"><use href="#ico-grid"/></svg></button>
+    <button class="view-btn" id="btn-map" title="Map view"><svg class="ico"><use href="#ico-map"/></svg></button>
     <button class="icon-btn" onclick="loadFromSheet()"><svg class="ico"><use href="#ico-refresh"/></svg> Refresh</button>
   </div>
 </div>
 
 <div id="filter-bar"></div>
 
-<div id="state-screen">
-  <div class="spinner"></div>
-  <div class="state-title">กำลังดึงข้อมูลจาก Sheet...</div>
+<div id="toolbar">
+  <input type="text" id="search-input" placeholder="ค้นหากล้อง...">
+  <select id="sort-select">
+    <option value="default">เรียง: ตามเมือง</option>
+    <option value="az">เรียง: A → Z</option>
+    <option value="za">เรียง: Z → A</option>
+  </select>
+  <span id="search-count"></span>
 </div>
+
+<div id="state-screen"><div class="spinner"></div><div class="state-title">กำลังดึงข้อมูลจาก Sheet...</div></div>
 <div id="main" style="display:none;"></div>
+<div id="map-view">
+  <div id="map-canvas"></div>
+  <div class="map-list" id="map-list"></div>
+</div>
 
 <div id="lightbox">
   <button id="lb-close"><svg class="ico"><use href="#ico-close"/></svg></button>
@@ -345,30 +277,60 @@ body::before {
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2M3MLnls1zD9pJSSgQ-7WLQaoaseAtuoLMNZyhAPs3fGU-URLidgM7nMPkJIaqBI0UA/exec';
+const PREF_KEY = 'japan_live_prefs';
 
 const CITIES = {
-  tokyo:    { th: 'โตเกียว',  en: 'TOKYO',    color: '#ff3b4e' },
-  osaka:    { th: 'โอซาก้า',  en: 'OSAKA',    color: '#ff8c42' },
-  kyoto:    { th: 'เกียวโต',  en: 'KYOTO',    color: '#f0c040' },
-  hokkaido: { th: 'ฮอกไกโด',  en: 'HOKKAIDO', color: '#4ab0ff' },
-  fukuoka:  { th: 'ฟุกุโอกะ', en: 'FUKUOKA',  color: '#a078f0' },
-  nara:     { th: 'นารา',     en: 'NARA',     color: '#50c878' },
-  other:    { th: 'อื่นๆ',    en: 'OTHER',    color: '#607080' },
+  tokyo:    { th: 'โตเกียว',  en: 'TOKYO',    color: '#ff3b4e', lat: 35.6762, lon: 139.6503 },
+  osaka:    { th: 'โอซาก้า',  en: 'OSAKA',    color: '#ff8c42', lat: 34.6937, lon: 135.5023 },
+  kyoto:    { th: 'เกียวโต',  en: 'KYOTO',    color: '#f0c040', lat: 35.0116, lon: 135.7681 },
+  hokkaido: { th: 'ฮอกไกโด',  en: 'HOKKAIDO', color: '#4ab0ff', lat: 43.0642, lon: 141.3469 },
+  fukuoka:  { th: 'ฟุกุโอกะ', en: 'FUKUOKA',  color: '#a078f0', lat: 33.5904, lon: 130.4017 },
+  nara:     { th: 'นารา',     en: 'NARA',     color: '#50c878', lat: 34.6851, lon: 135.8050 },
+  other:    { th: 'อื่นๆ',    en: 'OTHER',    color: '#607080', lat: 36.2048, lon: 138.2529 },
+};
+
+// weather code → emoji + label
+const WX = {
+  0:'☀ แจ่มใส', 1:'🌤 แจ่มใส', 2:'⛅ มีเมฆบาง', 3:'☁ มืดครึ้ม',
+  45:'🌫 หมอก', 48:'🌫 หมอก', 51:'🌦 ฝนปรอย', 53:'🌦 ฝนปรอย', 55:'🌧 ฝน',
+  61:'🌧 ฝน', 63:'🌧 ฝนหนัก', 65:'⛈ ฝนหนักมาก',
+  71:'❄ หิมะ', 73:'❄ หิมะ', 75:'❄ หิมะหนัก',
+  80:'🌦 ฝนฟ้า', 95:'⛈ ฟ้าคะนอง', 99:'⛈ ฝนฟ้าคะนอง'
 };
 
 let cameras = [];
+let weatherCache = {};
 let currentCity = 'all';
-let currentCols = window.innerWidth <= 600 ? 1 : 2;
+let currentCols = 2;
+let currentSort = 'default';
+let searchQuery = '';
+let currentView = 'grid';
 let lastUpdated = null;
 
-// ── FIX 1: อัปเดต --header-h ให้ city-header sticky ถูกต้องบนทุกขนาดจอ ──
+// ── 4. โหลด/บันทึก user preferences ──
+function loadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
+    if (p.city && (p.city === 'all' || CITIES[p.city])) currentCity = p.city;
+    if ([2,3,4].includes(p.cols)) currentCols = p.cols;
+    if (['default','az','za'].includes(p.sort)) currentSort = p.sort;
+    document.getElementById('sort-select').value = currentSort;
+    document.querySelectorAll('.col-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.cols) === currentCols));
+  } catch(e) {}
+}
+
+function savePrefs() {
+  try { localStorage.setItem(PREF_KEY, JSON.stringify({ city: currentCity, cols: currentCols, sort: currentSort })); } catch(e) {}
+}
+
+// ── Header offset ──
 function updateHeaderOffset() {
-  const h = document.getElementById('header').offsetHeight;
-  document.documentElement.style.setProperty('--header-h', h + 'px');
+  document.documentElement.style.setProperty('--header-h', document.getElementById('header').offsetHeight + 'px');
 }
 updateHeaderOffset();
 window.addEventListener('resize', updateHeaderOffset);
 
+// ── Clock ──
 function updateClock() {
   const jst = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
   const p = n => String(n).padStart(2,'0');
@@ -380,6 +342,16 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
+// ── 3. Auto refresh เมื่อ tab กลับมา active ──
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && cameras.length > 0) {
+    const now = new Date();
+    const p = n => String(n).padStart(2,'0');
+    const current = `${p(now.getHours())}:${p(now.getMinutes())}`;
+    if (lastUpdated && current !== lastUpdated) loadFromSheet();
+  }
+});
+
 function src(id) {
   return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&modestbranding=1`;
 }
@@ -387,33 +359,25 @@ function src(id) {
 function setBadge(state, text) {
   const b = document.getElementById('source-badge');
   b.className = state;
-  // ── FIX 6: แสดง last updated timestamp ──
-  const suffix = lastUpdated ? ` · ${lastUpdated}` : '';
-  document.getElementById('source-text').textContent = text + suffix;
+  document.getElementById('source-text').textContent = text + (lastUpdated ? ` · ${lastUpdated}` : '');
 }
 
-// ── SKELETON ──────────────────────────────────
+// ── SKELETON ──
 function showSkeleton() {
   document.getElementById('main').style.display = 'none';
+  document.getElementById('map-view').classList.remove('active');
   const ss = document.getElementById('state-screen');
   ss.style.display = 'block';
-  const cols = currentCols;
-  const sections = [4, 3, 3].map(count => `
+  ss.innerHTML = [4,3,3].map(count => `
     <div class="skeleton-section">
-      <div class="skeleton-city">
-        <div class="skeleton-bar"></div>
-        <div class="skeleton-text" style="width:80px"></div>
-        <div class="skeleton-text" style="width:50px;margin-left:4px"></div>
-      </div>
-      <div class="skeleton-grid" style="grid-template-columns:repeat(${cols},1fr)">
-        ${Array(count).fill('<div class="skeleton-card"></div>').join('')}
-      </div>
+      <div class="skeleton-city"><div class="skeleton-bar"></div><div class="skeleton-text" style="width:80px"></div><div class="skeleton-text" style="width:50px;margin-left:4px"></div></div>
+      <div class="skeleton-grid" style="grid-template-columns:repeat(${currentCols},1fr)">${Array(count).fill('<div class="skeleton-card"></div>').join('')}</div>
     </div>`).join('');
-  ss.innerHTML = sections;
 }
 
 function showState(html) {
   document.getElementById('main').style.display = 'none';
+  document.getElementById('map-view').classList.remove('active');
   const ss = document.getElementById('state-screen');
   ss.style.display = 'flex';
   ss.innerHTML = html;
@@ -423,153 +387,265 @@ function showMain() {
   const ss = document.getElementById('state-screen');
   ss.style.display = 'none';
   ss.innerHTML = '';
-  document.getElementById('main').style.display = 'block';
+  if (currentView === 'map') {
+    document.getElementById('main').style.display = 'none';
+    document.getElementById('map-view').classList.add('active');
+  } else {
+    document.getElementById('main').style.display = 'block';
+    document.getElementById('map-view').classList.remove('active');
+  }
 }
 
-// ── FIX 4: fetch พร้อม timeout 10 วินาที ──
+// ── fetch + timeout ──
 async function fetchWithTimeout(url, ms = 10000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), ms);
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
   try {
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timer);
-    return res;
+    const res = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(t); return res;
   } catch(e) {
-    clearTimeout(timer);
+    clearTimeout(t);
     if (e.name === 'AbortError') throw new Error('หมดเวลา — Sheet ตอบสนองช้าเกินไป (10s)');
     throw e;
   }
 }
 
+// ── 12. Weather (Open-Meteo ฟรี ไม่ต้อง key) ──
+async function fetchWeather() {
+  const cities = Object.entries(CITIES).filter(([k]) => k !== 'other');
+  await Promise.all(cities.map(async ([key, c]) => {
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,weathercode&timezone=Asia%2FTokyo`;
+      const res = await fetch(url);
+      const data = await res.json();
+      weatherCache[key] = { temp: Math.round(data.current.temperature_2m), code: data.current.weathercode };
+    } catch(e) {}
+  }));
+  renderWeatherBadges();
+}
+
+function renderWeatherBadges() {
+  document.querySelectorAll('.city-weather').forEach(el => {
+    const key = el.dataset.city;
+    const w = weatherCache[key];
+    if (!w) return;
+    const wx = WX[w.code] || '— —';
+    const [icon, ...label] = wx.split(' ');
+    el.innerHTML = `<span class="wicon">${icon}</span><span class="wtemp">${w.temp}°</span><span>${label.join(' ')}</span>`;
+    el.style.opacity = '1';
+  });
+}
+
+// ── Load ──
 async function loadFromSheet() {
   showSkeleton();
   setBadge('loading', 'กำลังโหลด...');
-
   try {
     const res = await fetchWithTimeout(SCRIPT_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
     if (!data.cameras || !Array.isArray(data.cameras)) throw new Error('รูปแบบข้อมูลไม่ถูกต้อง');
-
-    // ── FIX 3: normalize city key — lowercase + trim ──
     cameras = data.cameras
       .filter(c => c.id && c.id.trim())
-      .map(c => ({
-        ...c,
-        id:   c.id.trim(),
-        city: CITIES[c.city?.trim().toLowerCase()] ? c.city.trim().toLowerCase() : 'other'
-      }));
-
+      .map(c => ({ ...c, id: c.id.trim(), city: CITIES[c.city?.trim().toLowerCase()] ? c.city.trim().toLowerCase() : 'other' }));
     if (!cameras.length) throw new Error('ไม่พบข้อมูลกล้องใน Sheet');
-
-    // ── FIX 6: บันทึกเวลาที่โหลดล่าสุด ──
     const now = new Date();
     const p = n => String(n).padStart(2,'0');
     lastUpdated = `${p(now.getHours())}:${p(now.getMinutes())}`;
-
     setBadge('ok', `Sheet · ${cameras.length} กล้อง`);
     showMain();
     buildFilters();
-    render();
+    renderView();
     showToast(`โหลดสำเร็จ ${cameras.length} กล้อง`);
-
+    fetchWeather();
   } catch(e) {
     setBadge('err', 'โหลดไม่สำเร็จ');
     showState(`
-      <svg class="ico-lg ico" style="width:36px;height:36px;color:var(--accent)"><use href="#ico-warning"/></svg>
+      <svg class="ico-lg" style="color:var(--accent)"><use href="#ico-warning"/></svg>
       <div class="state-title">ดึงข้อมูลไม่สำเร็จ</div>
       <div class="state-sub">${e.message}<br><br>ตรวจสอบว่า Deploy ถูกต้องและ Who has access เป็น <strong>Anyone</strong></div>
-      <button class="retry-btn" onclick="loadFromSheet()">↻ ลองใหม่</button>
-    `);
+      <button class="retry-btn" onclick="loadFromSheet()">ลองใหม่</button>`);
   }
 }
 
-// ── INTERSECTION OBSERVER สำหรับ lazy load iframe ──
-const iframeObserver = new IntersectionObserver((entries) => {
+// ── 9. Sort + Search filter ──
+function getFilteredCameras() {
+  let list = [...cameras];
+  if (currentCity !== 'all') list = list.filter(c => c.city === currentCity);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(c => c.title.toLowerCase().includes(q) || (CITIES[c.city]?.th || '').includes(q) || (CITIES[c.city]?.en || '').toLowerCase().includes(q));
+  }
+  if (currentSort === 'az') list.sort((a,b) => a.title.localeCompare(b.title));
+  if (currentSort === 'za') list.sort((a,b) => b.title.localeCompare(a.title));
+  return list;
+}
+
+function renderView() {
+  if (currentView === 'map') { renderMap(); return; }
+  render();
+}
+
+// ── 1. Pause iframe เมื่อพ้น viewport ──
+const pauseObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const card = entry.target;
+    if (!card.classList.contains('loaded')) return;
+    const iframe = card.querySelector('iframe');
+    if (!iframe) return;
+    if (!entry.isIntersecting) {
+      card.dataset.savedSrc = iframe.src;
+      iframe.src = '';
+      card.classList.remove('loaded');
+    }
+  });
+}, { rootMargin: '100px' });
+
+const loadObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
     const card = entry.target;
     if (card.classList.contains('loaded')) return;
     const iframe = card.querySelector('iframe');
-    iframe.src = card.dataset.src;
+    if (!iframe) return;
+    iframe.src = card.dataset.savedSrc || card.dataset.src;
     card.classList.add('loaded');
-    iframeObserver.unobserve(card);
   });
 }, { rootMargin: '200px' });
 
-function thumbUrl(id) {
-  return `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
-}
+function thumbUrl(id) { return `https://i.ytimg.com/vi/${id}/mqdefault.jpg`; }
 
 function render() {
   const main = document.getElementById('main');
   main.innerHTML = '';
+  const filtered = getFilteredCameras();
+  const countEl = document.getElementById('search-count');
+
+  if (searchQuery || currentSort !== 'default') {
+    countEl.textContent = `${filtered.length} กล้อง`;
+  } else {
+    countEl.textContent = '';
+  }
+
+  if (filtered.length === 0) {
+    main.innerHTML = `<div class="no-results">ไม่พบกล้องที่ตรงกับ "${searchQuery}"</div>`;
+    return;
+  }
+
   const order = Object.keys(CITIES);
-  const grouped = {};
-  order.forEach(k => grouped[k] = []);
-  cameras.forEach(c => { (grouped[CITIES[c.city] ? c.city : 'other']).push(c); });
 
-  order.forEach(key => {
-    const cams = grouped[key];
-    if (!cams.length) return;
-    const city = CITIES[key];
-    const sec = document.createElement('div');
-    sec.className = 'city-section' + (currentCity !== 'all' && currentCity !== key ? ' hidden' : '');
-    sec.dataset.city = key;
-
-    const hdr = document.createElement('div');
-    hdr.className = 'city-header';
-    hdr.innerHTML = `<div class="city-bar" style="background:${city.color}"></div><span class="city-th">${city.th}</span><span class="city-en">${city.en}</span><span class="city-count">${cams.length} CAM</span><div class="city-spacer"></div>`;
-    sec.appendChild(hdr);
-
+  if (currentSort !== 'default' || searchQuery) {
+    // flatten mode — ไม่แบ่งตามเมือง
     const grid = document.createElement('div');
     grid.className = 'cam-grid';
     grid.style.gridTemplateColumns = `repeat(${currentCols}, 1fr)`;
-
-    cams.forEach(cam => {
-      const card = document.createElement('div');
-      card.className = 'cam-card';
-      card.dataset.src = src(cam.id);
-
-      // แสดง thumbnail ก่อน iframe ยังไม่โหลด
-      card.innerHTML = `
-        <img class="cam-thumb" src="${thumbUrl(cam.id)}" alt="${cam.title}" loading="lazy" decoding="async">
-        <div class="cam-fallback"><div class="cam-fallback-label">${cam.title}<br><span style="font-size:10px;color:var(--muted)">ไม่สามารถโหลดภาพได้</span></div></div>
-        <iframe src="" allow="autoplay" allowfullscreen></iframe>
-        <div class="thumb-play"><svg class="ico" style="width:18px;height:18px;color:#fff"><use href="#ico-play"/></svg></div>
-        <div class="cam-overlay"></div>
-        <div class="cam-bar">
-          <span class="cam-label">${cam.title}</span>
-          <div class="cam-btns"><button class="cam-act" title="ขยาย"><svg class="ico"><use href="#ico-expand"/></svg></button></div>
-        </div>`;
-
-      // thumbnail fade-in
-      const thumb = card.querySelector('.cam-thumb');
-      const fallback = card.querySelector('.cam-fallback');
-      thumb.addEventListener('load', () => thumb.classList.add('visible'));
-      thumb.addEventListener('error', () => { thumb.style.display = 'none'; fallback.classList.add('show'); });
-
-      card.querySelector('.cam-act').addEventListener('click', e => { e.stopPropagation(); openLB(cam); });
-      card.addEventListener('click', () => openLB(cam));
-      grid.appendChild(card);
-
-      // observe ให้โหลด iframe เฉพาะตอนใกล้ viewport
-      iframeObserver.observe(card);
+    filtered.forEach(cam => { grid.appendChild(makeCard(cam)); });
+    main.appendChild(grid);
+  } else {
+    // grouped by city
+    const grouped = {};
+    order.forEach(k => grouped[k] = []);
+    filtered.forEach(c => { (grouped[CITIES[c.city] ? c.city : 'other']).push(c); });
+    order.forEach(key => {
+      const cams = grouped[key];
+      if (!cams.length) return;
+      const city = CITIES[key];
+      const sec = document.createElement('div');
+      sec.className = 'city-section';
+      sec.dataset.city = key;
+      const wx = weatherCache[key];
+      const wxHtml = key !== 'other' ? `<div class="city-weather" data-city="${key}" style="opacity:${wx?1:0}">${wx ? (() => { const [icon,...label]=(WX[wx.code]||'— —').split(' '); return `<span class="wicon">${icon}</span><span class="wtemp">${wx.temp}°</span><span>${label.join(' ')}</span>`; })() : ''}</div>` : '';
+      sec.innerHTML = `<div class="city-header"><div class="city-bar" style="background:${city.color}"></div><span class="city-th">${city.th}</span><span class="city-en">${city.en}</span><span class="city-count">${cams.length} CAM</span><div class="city-spacer"></div>${wxHtml}</div>`;
+      const grid = document.createElement('div');
+      grid.className = 'cam-grid';
+      grid.style.gridTemplateColumns = `repeat(${currentCols}, 1fr)`;
+      cams.forEach(cam => { grid.appendChild(makeCard(cam)); });
+      sec.appendChild(grid);
+      main.appendChild(sec);
     });
+  }
+}
 
-    sec.appendChild(grid);
-    main.appendChild(sec);
+function makeCard(cam) {
+  const card = document.createElement('div');
+  card.className = 'cam-card';
+  card.dataset.src = src(cam.id);
+  card.dataset.savedSrc = src(cam.id);
+  card.innerHTML = `
+    <img class="cam-thumb" src="${thumbUrl(cam.id)}" alt="${cam.title}" loading="lazy" decoding="async">
+    <div class="cam-fallback"><div class="cam-fallback-label">${cam.title}<br><span style="font-size:10px;color:var(--muted)">ไม่สามารถโหลดภาพได้</span></div></div>
+    <iframe src="" allow="autoplay" allowfullscreen></iframe>
+    <div class="thumb-play"><svg class="ico" style="width:18px;height:18px;color:#fff"><use href="#ico-play"/></svg></div>
+    <div class="cam-overlay"></div>
+    <div class="cam-bar">
+      <span class="cam-label">${cam.title}</span>
+      <div class="cam-btns"><button class="cam-act" title="ขยาย"><svg class="ico"><use href="#ico-expand"/></svg></button></div>
+    </div>`;
+  const thumb = card.querySelector('.cam-thumb');
+  const fallback = card.querySelector('.cam-fallback');
+  thumb.addEventListener('load', () => thumb.classList.add('visible'));
+  thumb.addEventListener('error', () => { thumb.style.display = 'none'; fallback.classList.add('show'); });
+  card.querySelector('.cam-act').addEventListener('click', e => { e.stopPropagation(); openLB(cam); });
+  card.addEventListener('click', () => openLB(cam));
+  loadObserver.observe(card);
+  pauseObserver.observe(card);
+  return card;
+}
+
+// ── 11. Map view ──
+function renderMap() {
+  const filtered = getFilteredCameras();
+  // สร้าง markers string สำหรับ OpenStreetMap
+  const markerParts = filtered.map(cam => {
+    const city = CITIES[cam.city] || CITIES.other;
+    return `${city.lat},${city.lon}`;
+  });
+  const uniqueCities = [...new Set(filtered.map(c => c.city))];
+  const bounds = uniqueCities.map(k => CITIES[k] || CITIES.other);
+  const lats = bounds.map(c => c.lat);
+  const lons = bounds.map(c => c.lon);
+  const mlat = (Math.min(...lats) + Math.max(...lats)) / 2;
+  const mlon = (Math.min(...lons) + Math.max(...lons)) / 2;
+  const zoom = uniqueCities.length <= 1 ? 11 : uniqueCities.length <= 3 ? 7 : 5;
+
+  const markers = uniqueCities.map(key => {
+    const c = CITIES[key] || CITIES.other;
+    const count = filtered.filter(cam => cam.city === key).length;
+    return `marker=${c.lat},${c.lon}`;
+  }).join('&');
+
+  document.getElementById('map-canvas').innerHTML = `
+    <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${mlon-2},${mlat-1.5},${mlon+2},${mlat+1.5}&layer=mapnik&${markers}" style="width:100%;height:100%;border:none;"></iframe>`;
+
+  const list = document.getElementById('map-list');
+  list.innerHTML = '';
+
+  // group by city
+  const grouped = {};
+  Object.keys(CITIES).forEach(k => grouped[k] = []);
+  filtered.forEach(c => (grouped[c.city] || grouped['other']).push(c));
+
+  Object.entries(CITIES).forEach(([key, city]) => {
+    const cams = grouped[key];
+    if (!cams.length) return;
+    cams.forEach(cam => {
+      const item = document.createElement('div');
+      item.className = 'map-item';
+      item.innerHTML = `<div><span class="map-item-city" style="background:${city.color}"></span><span class="map-item-title">${cam.title}</span></div><div class="map-item-loc">${city.th}</div>`;
+      item.addEventListener('click', () => openLB(cam));
+      list.appendChild(item);
+    });
   });
 }
 
-// ── FIX 2: ย้าย event listener ออกนอก buildFilters() ให้ผูกครั้งเดียว ──
+// ── Filter bar ──
 document.getElementById('filter-bar').addEventListener('click', e => {
   const b = e.target.closest('.city-pill');
   if (!b) return;
   currentCity = b.dataset.city;
+  savePrefs();
   buildFilters();
-  document.querySelectorAll('.city-section').forEach(s => s.classList.toggle('hidden', currentCity !== 'all' && s.dataset.city !== currentCity));
+  renderView();
 });
 
 function buildFilters() {
@@ -580,11 +656,7 @@ function buildFilters() {
     const isActive = currentCity === city;
     b.className = 'city-pill' + (isActive ? ' active' : '');
     b.dataset.city = city;
-    if (isActive && activeColor) {
-      b.style.borderColor = activeColor;
-      b.style.color = activeColor;
-      b.style.background = `${activeColor}18`;
-    }
+    if (isActive && activeColor) { b.style.borderColor = activeColor; b.style.color = activeColor; b.style.background = `${activeColor}18`; }
     b.innerHTML = `<span class="pip" style="background:${pip}"></span>${label}<span style="color:var(--muted);font-size:10px;margin-left:3px">${count}</span>`;
     return b;
   };
@@ -597,35 +669,60 @@ function buildFilters() {
   });
 }
 
+// ── Columns ──
 document.querySelectorAll('.col-btn').forEach(b => {
   b.addEventListener('click', () => {
     currentCols = parseInt(b.dataset.cols);
     document.querySelectorAll('.col-btn').forEach(x => x.classList.toggle('active', x === b));
     document.querySelectorAll('.cam-grid').forEach(g => g.style.gridTemplateColumns = `repeat(${currentCols}, 1fr)`);
+    savePrefs();
   });
 });
 
+// ── View toggle ──
+document.getElementById('btn-grid').addEventListener('click', () => {
+  currentView = 'grid';
+  document.getElementById('btn-grid').classList.add('active');
+  document.getElementById('btn-map').classList.remove('active');
+  showMain();
+  renderView();
+});
+document.getElementById('btn-map').addEventListener('click', () => {
+  currentView = 'map';
+  document.getElementById('btn-map').classList.add('active');
+  document.getElementById('btn-grid').classList.remove('active');
+  showMain();
+  renderView();
+});
+
+// ── 9. Search ──
+document.getElementById('search-input').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderView();
+});
+
+// ── 9. Sort ──
+document.getElementById('sort-select').addEventListener('change', e => {
+  currentSort = e.target.value;
+  savePrefs();
+  renderView();
+});
+
+// ── Lightbox ──
 function openLB(cam) {
   document.getElementById('lb-title').textContent = `${cam.title.toUpperCase()} · ${(CITIES[cam.city]||CITIES.other).en}`;
   document.getElementById('lb-iframe').src = src(cam.id);
   document.getElementById('lightbox').classList.add('open');
 }
-
 function closeLB() {
   document.getElementById('lightbox').classList.remove('open');
   document.getElementById('lb-iframe').src = '';
 }
-
 document.getElementById('lb-close').addEventListener('click', closeLB);
-document.getElementById('lightbox').addEventListener('click', e => {
-  if (e.target.id === 'lightbox') closeLB();
-});
+document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLB(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('lightbox').classList.contains('open')) closeLB(); });
 
-// ── FIX 5: Escape key ปิด Lightbox ──
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('lightbox').classList.contains('open')) closeLB();
-});
-
+// ── Toast ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -635,6 +732,10 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// ── Init ──
+loadPrefs();
+// sync col btn active state after loadPrefs
+document.querySelectorAll('.col-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.cols) === currentCols));
 loadFromSheet();
 </script>
 </body>
