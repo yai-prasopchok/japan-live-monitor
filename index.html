@@ -118,7 +118,7 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
 /* WEATHER BADGE */
 .city-weather { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted2); padding: 2px 8px; border: 1px solid var(--border); border-radius: 2px; }
 .city-weather .wtemp { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--text); letter-spacing: 0.05em; }
-.city-weather .wicon { font-size: 13px; line-height: 1; }
+.city-weather .wicon { width: 14px; height: 14px; display: inline-block; flex-shrink: 0; color: var(--muted2); }
 
 /* CAMERA GRID */
 .cam-grid { display: grid; gap: 1px; background: var(--border); }
@@ -253,6 +253,15 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
   <symbol id="ico-grid" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></symbol>
   <symbol id="ico-map" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3l4-1 6 2 4-1v11l-4 1-6-2-4 1V3z"/><path d="M5 2v11M11 4v11"/></symbol>
   <symbol id="ico-pip" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="14" height="10" rx="1.5"/><rect x="8" y="7" width="6" height="4" rx="1" fill="currentColor" stroke="none"/></symbol>
+  <!-- weather icons -->
+  <symbol id="wx-sunny" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><line x1="8" y1="1" x2="8" y2="2.5"/><line x1="8" y1="13.5" x2="8" y2="15"/><line x1="1" y1="8" x2="2.5" y2="8"/><line x1="13.5" y1="8" x2="15" y2="8"/><line x1="3" y1="3" x2="4.1" y2="4.1"/><line x1="11.9" y1="11.9" x2="13" y2="13"/><line x1="13" y1="3" x2="11.9" y2="4.1"/><line x1="4.1" y1="11.9" x2="3" y2="13"/></symbol>
+  <symbol id="wx-partly-cloudy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="6.5" cy="5.5" r="2.2"/><line x1="6.5" y1="1" x2="6.5" y2="2"/><line x1="10" y1="2" x2="9.2" y2="2.8"/><line x1="11" y1="5.5" x2="10" y2="5.5"/><path d="M5 9.5a3 3 0 0 1 0-6h.5a3.5 3.5 0 0 1 6.5 1.5A2.5 2.5 0 0 1 11 9.5H5z"/></symbol>
+  <symbol id="wx-cloudy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 10.5a3 3 0 0 1 0-6h.5a3.5 3.5 0 0 1 6.5 1.5A2.5 2.5 0 0 1 9.5 10.5H3z"/></symbol>
+  <symbol id="wx-fog" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><line x1="2" y1="5" x2="14" y2="5"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="11" x2="10" y2="11"/></symbol>
+  <symbol id="wx-drizzle" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 8a3 3 0 0 1 0-6h.5a3.5 3.5 0 0 1 6.5 1.5A2.5 2.5 0 0 1 9.5 8H3z"/><line x1="5" y1="11" x2="4.5" y2="13"/><line x1="8" y1="11" x2="7.5" y2="13"/></symbol>
+  <symbol id="wx-rain" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 8a3 3 0 0 1 0-6h.5a3.5 3.5 0 0 1 6.5 1.5A2.5 2.5 0 0 1 9.5 8H3z"/><line x1="4" y1="11" x2="3" y2="14"/><line x1="7" y1="11" x2="6" y2="14"/><line x1="10" y1="11" x2="9" y2="14"/></symbol>
+  <symbol id="wx-thunder" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a3 3 0 0 1 0-6h.5a3.5 3.5 0 0 1 6.5 1.5A2.5 2.5 0 0 1 9.5 8H3z"/><polyline points="7,10 5,13 7.5,13 5.5,16"/></symbol>
+  <symbol id="wx-snow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 8a3 3 0 0 1 0-6h.5a3.5 3.5 0 0 1 6.5 1.5A2.5 2.5 0 0 1 9.5 8H3z"/><circle cx="4.5" cy="12" r="0.8" fill="currentColor" stroke="none"/><circle cx="7.5" cy="12" r="0.8" fill="currentColor" stroke="none"/><circle cx="4.5" cy="14.5" r="0.8" fill="currentColor" stroke="none"/><circle cx="7.5" cy="14.5" r="0.8" fill="currentColor" stroke="none"/></symbol>
 </svg>
 
 <div id="header">
@@ -321,14 +330,32 @@ const CITIES = {
   other:    { th: 'อื่นๆ',    en: 'OTHER',    color: '#607080', lat: 36.2048, lon: 138.2529 },
 };
 
-// weather code → emoji + label
+// weather code → { icon: svgId, label }
 const WX = {
-  0:'☀ แจ่มใส', 1:'🌤 แจ่มใส', 2:'⛅ มีเมฆบาง', 3:'☁ มืดครึ้ม',
-  45:'🌫 หมอก', 48:'🌫 หมอก', 51:'🌦 ฝนปรอย', 53:'🌦 ฝนปรอย', 55:'🌧 ฝน',
-  61:'🌧 ฝน', 63:'🌧 ฝนหนัก', 65:'⛈ ฝนหนักมาก',
-  71:'❄ หิมะ', 73:'❄ หิมะ', 75:'❄ หิมะหนัก',
-  80:'🌦 ฝนฟ้า', 95:'⛈ ฟ้าคะนอง', 99:'⛈ ฝนฟ้าคะนอง'
+  0:  { icon:'wx-sunny',        label:'แจ่มใส' },
+  1:  { icon:'wx-sunny',        label:'แจ่มใส' },
+  2:  { icon:'wx-partly-cloudy',label:'มีเมฆบาง' },
+  3:  { icon:'wx-cloudy',       label:'มืดครึ้ม' },
+  45: { icon:'wx-fog',          label:'หมอก' },
+  48: { icon:'wx-fog',          label:'หมอก' },
+  51: { icon:'wx-drizzle',      label:'ฝนปรอย' },
+  53: { icon:'wx-drizzle',      label:'ฝนปรอย' },
+  55: { icon:'wx-rain',         label:'ฝน' },
+  61: { icon:'wx-rain',         label:'ฝน' },
+  63: { icon:'wx-rain',         label:'ฝนหนัก' },
+  65: { icon:'wx-thunder',      label:'ฝนหนักมาก' },
+  71: { icon:'wx-snow',         label:'หิมะ' },
+  73: { icon:'wx-snow',         label:'หิมะ' },
+  75: { icon:'wx-snow',         label:'หิมะหนัก' },
+  80: { icon:'wx-drizzle',      label:'ฝนฟ้า' },
+  95: { icon:'wx-thunder',      label:'ฟ้าคะนอง' },
+  99: { icon:'wx-thunder',      label:'ฝนฟ้าคะนอง' },
 };
+
+function wxHtml(code, temp) {
+  const w = WX[code] || { icon: 'wx-cloudy', label: '—' };
+  return `<svg class="wicon"><use href="#${w.icon}"/></svg><span class="wtemp">${temp}°</span><span>${w.label}</span>`;
+}
 
 let cameras = [];
 let weatherCache = {};
@@ -459,9 +486,7 @@ function renderWeatherBadges() {
     const key = el.dataset.city;
     const w = weatherCache[key];
     if (!w) return;
-    const wx = WX[w.code] || '— —';
-    const [icon, ...label] = wx.split(' ');
-    el.innerHTML = `<span class="wicon">${icon}</span><span class="wtemp">${w.temp}°</span><span>${label.join(' ')}</span>`;
+    el.innerHTML = wxHtml(w.code, w.temp);
     el.style.opacity = '1';
   });
 }
@@ -585,8 +610,8 @@ function render() {
       sec.className = 'city-section';
       sec.dataset.city = key;
       const wx = weatherCache[key];
-      const wxHtml = key !== 'other' ? `<div class="city-weather" data-city="${key}" style="opacity:${wx?1:0}">${wx ? (() => { const [icon,...label]=(WX[wx.code]||'— —').split(' '); return `<span class="wicon">${icon}</span><span class="wtemp">${wx.temp}°</span><span>${label.join(' ')}</span>`; })() : ''}</div>` : '';
-      sec.innerHTML = `<div class="city-header"><div class="city-bar" style="background:${city.color}"></div><span class="city-th">${city.th}</span><span class="city-en">${city.en}</span><span class="city-count">${cams.length} CAM</span><div class="city-spacer"></div>${wxHtml}</div>`;
+      const wxBadge = key !== 'other' ? `<div class="city-weather" data-city="${key}" style="opacity:${wx?1:0}">${wx ? wxHtml(wx.code, wx.temp) : ''}</div>` : '';
+      sec.innerHTML = `<div class="city-header"><div class="city-bar" style="background:${city.color}"></div><span class="city-th">${city.th}</span><span class="city-en">${city.en}</span><span class="city-count">${cams.length} CAM</span><div class="city-spacer"></div>${wxBadge}</div>`;
       const grid = document.createElement('div');
       grid.className = 'cam-grid';
       grid.style.gridTemplateColumns = `repeat(${currentCols}, 1fr)`;
