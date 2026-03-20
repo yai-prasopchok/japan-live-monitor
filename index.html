@@ -284,6 +284,31 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
 .ico-lg { width: 36px; height: 36px; }
 
 /* ── MOBILE ── */
+#mobile-search-bar {
+  display: none;
+  align-items: center; gap: 8px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+#mobile-search-bar #mob-search {
+  flex: 1; height: 30px; padding: 0 10px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 5px; color: var(--text);
+  font-size: 12px; font-family: 'Sarabun', sans-serif;
+  outline: none; transition: border-color 0.15s;
+}
+#mobile-search-bar #mob-search:focus { border-color: var(--accent); }
+#mobile-search-bar #mob-search::placeholder { color: var(--muted); }
+#mobile-search-bar #mob-sort {
+  height: 30px; padding: 0 8px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 5px; color: var(--muted2);
+  font-size: 11px; font-family: 'Sarabun', sans-serif;
+  outline: none; cursor: pointer; flex-shrink: 0;
+}
+#mobile-search-bar #mob-sort option { background: #15151e; }
+
 @media (max-width: 640px) {
   .header-top { padding: 0 14px; height: 48px; gap: 8px; }
   .logo-sub { display: none; }
@@ -294,9 +319,13 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
   .col-grp { display: none; }
   .header-right { gap: 4px; }
 
-  .header-controls { padding: 0 14px; height: 42px; gap: 6px; }
-  .city-pill { padding: 0 10px; font-size: 11px; height: 42px; }
-  #search-input { width: 100px; flex-shrink: 1; min-width: 0; }
+  /* filter bar — pills เท่านั้น ซ่อน search/sort/spacer */
+  .header-controls { padding: 0; height: 38px; }
+  .ctrl-spacer, .ctrl-sep, #search-input, #sort-select, #search-count { display: none; }
+  .city-pill { padding: 0 12px; font-size: 11px; height: 38px; }
+
+  /* แถว search แยกต่างหาก */
+  #mobile-search-bar { display: flex; }
 
   .cam-grid { padding: 10px 12px; gap: 8px; grid-template-columns: 1fr !important; }
   .city-header { padding: 16px 14px 8px; }
@@ -410,6 +439,14 @@ body::before { content: ''; position: fixed; inset: 0; background: repeating-lin
     </select>
     <span id="search-count"></span>
   </div>
+  <div id="mobile-search-bar">
+    <input type="text" id="mob-search" placeholder="ค้นหากล้อง...">
+    <select id="mob-sort">
+      <option value="default">ตามเมือง</option>
+      <option value="az">A → Z</option>
+      <option value="za">Z → A</option>
+    </select>
+  </div>
 </div>
 
 <div id="state-screen"><div class="spinner"></div><div class="state-title">กำลังดึงข้อมูลจาก Sheet...</div></div>
@@ -488,6 +525,7 @@ function loadPrefs() {
     if ([2,3,4].includes(p.cols)) currentCols = p.cols;
     if (['default','az','za'].includes(p.sort)) currentSort = p.sort;
     document.getElementById('sort-select').value = currentSort;
+    document.getElementById('mob-sort').value = currentSort;
     document.querySelectorAll('.col-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.cols) === currentCols));
   } catch(e) {}
 }
@@ -943,12 +981,25 @@ document.getElementById('btn-map').addEventListener('click', () => {
 // ── 9. Search ──
 document.getElementById('search-input').addEventListener('input', e => {
   searchQuery = e.target.value.trim();
+  document.getElementById('mob-search').value = searchQuery;
+  renderView();
+});
+document.getElementById('mob-search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  document.getElementById('search-input').value = searchQuery;
   renderView();
 });
 
 // ── 9. Sort ──
 document.getElementById('sort-select').addEventListener('change', e => {
   currentSort = e.target.value;
+  document.getElementById('mob-sort').value = currentSort;
+  savePrefs();
+  renderView();
+});
+document.getElementById('mob-sort').addEventListener('change', e => {
+  currentSort = e.target.value;
+  document.getElementById('sort-select').value = currentSort;
   savePrefs();
   renderView();
 });
