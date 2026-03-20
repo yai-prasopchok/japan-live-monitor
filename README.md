@@ -2,19 +2,25 @@
 
 หน้าจอรวม live camera จากสถานที่ต่างๆ ในประเทศญี่ปุ่น สำหรับดูสภาพอากาศ ความหนาแน่นของผู้คน และบรรยากาศก่อนเดินทาง
 
+🔗 **[เปิดใช้งาน](https://yai-prasopchok.github.io/japan-live-monitor/)**
+
 ![Japan Live Monitor Screenshot](screenshot.png)
 
 ---
 
 ## Features
 
-- 📍 จัดกล้องเป็นกลุ่มตามเมือง (โตเกียว, โอซาก้า, เกียวโต, ฮอกไกโด, ฟุกุโอกะ, นารา)
+- 📍 จัดกล้องเป็นกลุ่มตามเมือง — โตเกียว, โอซาก้า, เกียวโต, ฮอกไกโด, ฟุกุโอกะ, นารา
+- 🌤 Weather overlay แสดงอุณหภูมิและสภาพอากาศแบบ real-time แต่ละเมือง
+- 🗺 Map view ดูตำแหน่งกล้องบนแผนที่
 - 🕐 นาฬิกา Japan Standard Time (JST) แบบ real-time
+- 🔍 ค้นหากล้องและเรียงลำดับ (A-Z / Z-A)
 - 🔗 ดึงรายการกล้องจาก Google Sheets ผ่าน Apps Script
-- 🔍 ฟิลเตอร์ตามเมือง
-- ⛶ คลิกขยายกล้องเต็มจอ พร้อมปิดด้วย Escape
-- 📱 รองรับมือถือและแท็บเล็ต
-- ↻ Refresh ดึงข้อมูลใหม่จาก Sheet ได้ทุกเมื่อ
+- ↻ Auto refresh เมื่อกลับมาที่ tab (threshold 5 นาที)
+- ⛶ คลิกขยายกล้องเต็มจอ พร้อม Picture-in-Picture
+- ⏸ Auto pause iframe เมื่อ scroll พ้นจอ ประหยัด CPU
+- 💾 จำค่า city filter, คอลัมน์ และการเรียงลำดับ
+- 📱 รองรับมือถือ, แท็บเล็ต และติดหน้าจอได้ (PWA)
 
 ---
 
@@ -71,13 +77,13 @@ function doGet(e) {
 
 ### 4. เปิดใช้งาน
 
-เปิดไฟล์ `index.html` ในเบราว์เซอร์ได้เลย — URL ของ Apps Script ถูกฝังไว้ในไฟล์แล้ว
+เปิด [https://yai-prasopchok.github.io/japan-live-monitor/](https://yai-prasopchok.github.io/japan-live-monitor/) ได้เลย
 
 ---
 
 ## การเพิ่มกล้องใหม่
 
-เพิ่มแถวใน Google Sheet ได้เลย แล้วกดปุ่ม **↻ Refresh** ในหน้าจอ
+เพิ่มแถวใน Google Sheet ได้เลย แล้วกดปุ่ม **Refresh** ในหน้าจอ
 
 **วิธีหา YouTube Video ID:**
 ```
@@ -88,11 +94,23 @@ https://www.youtube.com/watch?v=3Q5wZeTuttw
 
 ---
 
+## ติดตั้งบนมือถือ (PWA)
+
+**Android** — เปิด Chrome → กด ⋮ → Add to Home screen
+
+**iOS** — เปิด Safari → กด Share → Add to Home Screen
+
+---
+
 ## โครงสร้างไฟล์
 
 ```
 japan-live-monitor/
-├── index.html   # ไฟล์หลัก (เปิดในเบราว์เซอร์ได้เลย)
+├── index.html        # ไฟล์หลัก
+├── manifest.json     # PWA manifest
+├── sw.js             # Service Worker
+├── icon-192.png      # App icon
+├── icon-512.png      # App icon (large)
 └── README.md
 ```
 
@@ -103,6 +121,8 @@ japan-live-monitor/
 - **Frontend:** HTML, CSS, JavaScript (vanilla — ไม่มี dependencies)
 - **Data source:** Google Sheets + Google Apps Script
 - **Video:** YouTube Embed API
+- **Weather:** [Open-Meteo](https://open-meteo.com/) (ฟรี ไม่ต้อง API key)
+- **Map:** OpenStreetMap (ฟรี ไม่ต้อง API key)
 - **Font:** Bebas Neue, Sarabun (Google Fonts)
 
 ---
@@ -111,4 +131,5 @@ japan-live-monitor/
 
 - กล้องที่แสดงต้องเป็น YouTube live stream เท่านั้น
 - Apps Script มี quota ฟรี 20,000 requests/วัน (เกินพอสำหรับใช้ส่วนตัว)
-- ต้องเปิดไฟล์ผ่าน browser ที่รองรับ YouTube embed (Chrome, Safari, Firefox)
+- PWA ต้องเสิร์ฟผ่าน HTTPS (GitHub Pages รองรับอยู่แล้ว)
+- Picture-in-Picture อาจไม่รองรับบางเบราว์เซอร์
